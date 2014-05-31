@@ -51,10 +51,9 @@ void ofxBulletWorldRigid::setup() {
 }
 
 //--------------------------------------------------------------
-void ofxBulletWorldRigid::update() {
+void ofxBulletWorldRigid::update( float aDeltaTimef, int aNumIterations ) {
 	if(!checkWorld()) return;
-	// should this run on delta time? //
-	world->stepSimulation(1.0f/60.0f, 6 );
+	world->stepSimulation( aDeltaTimef, aNumIterations );
 	
 	if(bDispatchCollisionEvents) {
 		world->performDiscreteCollisionDetection();
@@ -132,7 +131,8 @@ ofxBulletRaycastData ofxBulletWorldRigid::raycastTest(float a_x, float a_y, shor
 	ofVec3f castRay = _camera->screenToWorld( ofVec3f(a_x, a_y, 0) );
 	castRay = castRay - _camera->getPosition();
 	castRay.normalize();
-	castRay *= 300;
+	castRay *= 1000;
+    castRay += _camera->getPosition();
 	
 	return raycastTest( _camera->getPosition(), castRay, a_filterMask);
 }
@@ -356,7 +356,8 @@ void ofxBulletWorldRigid::mouseDragged( ofMouseEventArgs &a ) {
 			ofVec3f mouseRay = _camera->screenToWorld( ofVec3f((float)a.x, (float)a.y, 0) );
 			mouseRay = mouseRay - _camera->getPosition();
 			mouseRay.normalize();
-			mouseRay *= 300.f;
+			mouseRay *= 1000.f;
+            mouseRay += _camera->getPosition();
 			btVector3 newRayTo(mouseRay.x, mouseRay.y, mouseRay.z);
 			
 			btVector3 oldPivotInB = pickCon->getFrameOffsetA().getOrigin();
